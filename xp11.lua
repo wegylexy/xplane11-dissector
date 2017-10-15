@@ -120,7 +120,7 @@ local subdissectors = {
 				local lat = latitude(b(4, 4):le_float())
 				local level = b(8, 1):uint()
 				local height = b(9, 4):le_float()
-				local st = subtree:add(xp11_radr, b, lat, lon, level .. "%", height / .3048 .. "ft MSL")
+				local st = subtree:add(xp11_radr, b, "[" .. i .. "]", lat, lon, level .. "%", truncate(height / .3048) .. "ft MSL")
 				st:add_le(xp11_radr.fields.lon, b(0, 4)):set_text("Longitude: " .. lon)
 				st:add_le(xp11_radr.fields.lat, b(4, 4)):set_text("Latitude: " .. lat)
 				st:add_le(xp11_radr.fields.level, b(8, 1)):set_text("Precipitation: " .. level .. " %")
