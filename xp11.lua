@@ -25,11 +25,15 @@ xp11_rpos.fields.p = ProtoField.float("xp11.rpos.p", "Roll Rate")
 xp11_rpos.fields.q = ProtoField.float("xp11.rpos.q", "Pitch Rate")
 xp11_rpos.fields.r = ProtoField.float("xp11.rpos.r", "Yaw Rate")
 
-xp11_radr = Proto("xp11.radr", "X-Plane 11 Weather Radar Data Point")
+xp11_radr = Proto("xp11.radr", "X-Plane 11 Weather Radar Data Points")
 xp11_radr.fields.lon = ProtoField.float("xp11.radr.lon", "Longitude")
 xp11_radr.fields.lat = ProtoField.float("xp11.radr.lat", "Latitude")
 xp11_radr.fields.level = ProtoField.uint8("xp11.radr.level", "Precipitation")
 xp11_radr.fields.height = ProtoField.float("xp11.radr.height", "Storm Top")
+
+xp11_rref = Proto("xp11.rref", "X-Plane 11 Received Reference")
+xp11_rref.fields.en = ProtoField.float("xp11.rref.en", "Echo Number")
+xp11_rref.fields.flt = ProtoField.float("xp11.rref.flt", "Float Value")
 
 local function truncate(value)
 	return value < 0 and math.ceil(value) or math.floor(value)
@@ -87,7 +91,7 @@ local subdissectors = {
 		end,
 	RPOS =
 		function (buffer, pinfo, tree)
-			local subtree = tree:add(xp11_rpos, buffer(0, 16), "X-Plane 11 Position Report")
+			local subtree = tree:add(xp11_rpos, buffer(0, 16))
 			subtree:add_le(xp11_rpos.fields.lon, buffer(0, 8)):set_text("Longitude: " .. longitude(buffer(0, 8):le_float()))
 			subtree:add_le(xp11_rpos.fields.lat, buffer(8, 8)):set_text("Latitude: " .. latitude(buffer(8, 8):le_float()))
 			subtree:add_le(xp11_rpos.fields.ele, buffer(16, 8)):set_text("Altitude: " .. buffer(16, 8):le_float() / .3048 .. " ft MSL")
@@ -111,7 +115,7 @@ local subdissectors = {
 		end,
 	RADR =
 		function (buffer, pinfo, tree)
-			local subtree = tree:add("X-Plane 11 Weather Radar Data Points")
+			local subtree = tree:add(xp11_radr, buffer())
 			local count = buffer:len() / 13
 			subtree:add("[Count: " .. count .. "]")
 			for i = 0, count - 1 do
@@ -126,6 +130,12 @@ local subdissectors = {
 				st:add_le(xp11_radr.fields.level, b(8, 1)):set_text("Precipitation: " .. level .. " %")
 				st:add_le(xp11_radr.fields.height, b(9, 4)):set_text("Storm Top: " .. height .. " m MSL")
 			end
+		end,
+	RREF =
+		function (buffer, pinfo, tree)
+			local subtree = tree:add(xp11_rref, buffer(0, 8))
+			subtree:add_le(xp11_rref.fields.en, buffer(0, 4))
+			subtree:add_le(xp11_rref.fields.flt, buffer(4, 4))
 		end,
 }
 
