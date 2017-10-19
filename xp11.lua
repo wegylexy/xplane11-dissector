@@ -33,7 +33,7 @@ xp11_radr.fields.height = ProtoField.float("xp11.radr.height", "Storm Top")
 
 xp11_rref = Proto("xp11.rref", "X-Plane 11 Received Reference")
 xp11_rref.fields.en = ProtoField.float("xp11.rref.en", "Echo Number")
-xp11_rref.fields.flt = ProtoField.float("xp11.rref.flt", "Float Value")
+xp11_rref.fields.flt = ProtoField.float("xp11.rref.flt", "Data Reference")
 
 local function truncate(value)
 	return value < 0 and math.ceil(value) or math.floor(value)
