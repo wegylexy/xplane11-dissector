@@ -69,7 +69,12 @@ local subdissectors = {
 			local appid = buffer(2, 4):le_int();
 			local apps = {
 				[1] = "X-Plane",
-				[2] = "Plane Maker"
+				[2] = "Plane Maker",
+				[3] = "World Maker",
+				[4] = "Briefer",
+				[5] = "Part Maker",
+				[6] = "Young's Mod",
+				[7] = "X-Auto"
 			}
 			local version = buffer(6, 4):le_int();
 			local role = buffer(10, 4):le_int();
